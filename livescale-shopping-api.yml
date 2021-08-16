@@ -1,0 +1,844 @@
+openapi: "3.0.0"
+info:
+  description: "This is the Livescale Shopping Server Open API specification."
+  version: "0.1.0"
+  title: "Livescale Shopping"
+  termsOfService: "https://www.livescale.tv/terms-and-conditions/"
+  contact:
+    email: "api@livescale.tv"
+  license:
+    name: "Apache 2.0"
+    url: "http://www.apache.org/licenses/LICENSE-2.0.html"
+tags:
+- name: "Authorization"
+- name: "Product Management"
+- name: "Basket Management"
+- name: "Customer Management"
+- name: "Shipping"
+- name: "Promotion"
+- name: "Payment Information"
+- name: "Order Management"
+paths:
+  # Authorization
+  /authentication:
+    post:
+      tags:
+        - "authorization"
+      description: "authorization of customer"
+      operationId: "postauthentication"
+      responses:
+        "200":
+          description: "The returned Authorization header will be add on every other call header Authorization"
+          headers:
+            Authorization:
+              schema:
+                type: "string"
+  # Product Management 
+  /catalogs:
+      get:
+        tags:
+        - "Product Management"
+        description: "Get all catalogs available"
+        operationId: "getCatalogs"
+        responses:
+          "200":
+            description: "successful operation"
+            content:
+              application/json:
+                schema:
+                  type: "array"
+                  items:
+                    $ref: "#/components/schemas/CatalogList"
+          "404":
+            description: "No catalog found"
+  /catalogs/{catalog_id}/products:
+    get:
+      tags:
+        - "Product Management"
+      description: "Get all products from a catalog"
+      operationId: "getCatalogProducts"
+      parameters:
+      - name: "catalog_id"
+        in: "path"
+        description: "ID of the catalog that needs to be fetched"
+        required: true
+        schema: 
+          type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Catalog"
+        "400":
+          description: "Invalid Catalog ID supplied"
+        "404":
+          description: "Catalog not found"
+  # Basket Management
+  /baskets:
+    post:
+      tags:
+        - "Basket Management"
+      description: "Create a basket for the customer"
+      operationId: "postBasket"
+      requestBody:
+        $ref: '#/components/requestBodies/NoRequiredItemsBody'
+      responses:
+        "201":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+  /baskets/{basket_id}/items:
+    post:
+      tags:
+        - "Basket Management"
+      description: "Add items to an existing basket"
+      operationId: "postBasketItems"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+      requestBody:
+        $ref: '#/components/requestBodies/ItemsBody'
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+  /baskets/{basket_id}/items/{item_id}:
+    put:
+      tags:
+        - "Basket Management"
+      description: "Update specific item to an existing basket"
+      operationId: "putBasketItems"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+        - name: "item_id"
+          in: "path"
+          description: "ID of the item that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+      requestBody:
+        $ref: '#/components/requestBodies/ItemBody'
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+    delete:
+      tags:
+        - "Basket Management"
+      description: "Delete specific item to an existing basket"
+      operationId: "deleteBasketItems"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+        - name: "item_id"
+          in: "path"
+          description: "ID of the item that needs to be deleted"
+          required: true
+          schema: 
+            type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+  # Customer Management
+  /baskets/{basket_id}/customers:
+    post:
+      tags:
+        - "Customer Management"
+      description: "Update customer to an existing basket"
+      operationId: "postBasketCustomer"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+      requestBody:
+        $ref: '#/components/requestBodies/CustomerBody'
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+  # Shipping
+  /baskets/{basket_id}/shipping_addresses:
+    post:
+      tags:
+        - "Shipping"
+      description: "Update basket's shipping address"
+      operationId: "postBasketShippingAddress"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+      requestBody:
+        $ref: '#/components/requestBodies/AddressBody'
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+  /baskets/{basket_id}/shipping_methods:
+    get:
+      tags:
+        - "Shipping"
+      description: "Get shipping methods available for the basket"
+      operationId: "getBasketShippingMethods"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket"
+          required: true
+          schema: 
+            type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/ShippingMethod"
+    post:
+      tags:
+        - "Shipping"
+      description: "Add shipping method to the basket"
+      operationId: "postBasketShippingMehtod"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+      requestBody:
+        $ref: '#/components/requestBodies/ShippingMethodBody'
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+  # Promotion
+  /baskets/{basket_id}/promotions:
+    post:
+      tags:
+        - "Promotion"
+      description: "Add promotion to the basket"
+      operationId: "postBasketPromotion"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+      requestBody:
+        $ref: "#/components/requestBodies/PromotionBody"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+  # Payment Information
+  /baskets/{basket_id}/billing_addresses:
+    post:
+      tags:
+        - "Payment Information"
+      description: "Update basket's billing address"
+      operationId: "postBasketBillingAddress"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+      requestBody:
+        $ref: '#/components/requestBodies/AddressBody'
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+  /baskets/{basket_id}/payment_methods:
+    get:
+      tags:
+        - "Payment Information"
+      description: "Get payment methods available for the basket"
+      operationId: "getBasketPaymentMethods"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket"
+          required: true
+          schema: 
+            type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/PaymentMethod"
+    post:
+      tags:
+        - "Payment Information"
+      description: "Add payment method to the basket"
+      operationId: "postBasketPaymentMehtod"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+      requestBody:
+        $ref: '#/components/requestBodies/PaymentMethodBody'
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+  # Order Management
+  /orders:
+    post:
+      tags:
+        - "Order Management"
+      description: "Create order from a basket"
+      operationId: "postOrder"
+      requestBody:
+        $ref: "#/components/requestBodies/OrderBody"
+      responses:
+        "201":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+components:
+  requestBodies:
+    ItemBody:
+      description: Item ID and quantity
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              id: 
+                type: "string"
+              quantity: 
+                type: "integer"
+                format: "int32"
+    ItemsBody:
+      description: An array of item ID and quantity
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id: 
+                  type: "string"
+                quantity: 
+                  type: "integer"
+                  format: "int32"
+    NoRequiredItemsBody:
+      description: An array of item ID and quantity
+      required: false
+      content:
+        application/json:
+          schema:
+            type: "array"
+            items:
+              type: "object"
+              properties:
+                id: 
+                  type: "string"
+                quantity: 
+                  type: "integer"
+                  format: "int32"
+    CustomerBody:
+      description: Object that contains customer id or email
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              id: 
+                type: "string"
+              email: 
+                type: "string"
+                format: "email"
+    AddressBody:
+      description: Object that contains an address
+      required: true
+      content:
+        application/json:
+          schema:
+            $ref: "#/components/schemas/Address" 
+    ShippingMethodBody:
+      description: ID of the selected shipping method
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              id: 
+                type: "string"
+    PaymentMethodBody:
+      description: ID of the selected payment method
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties:
+              id: 
+                type: "string"
+    PromotionBody: 
+      description: ID of the user entered coupon
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties: 
+              coupon: 
+                type: "string"
+    OrderBody: 
+      description: ID of the basket to convert to Order. Gateway Token and Payment Method Token needed to place and Authorization and Capture.
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties: 
+              basket_id: 
+                type: "string"
+              gateway_token:
+                type: "string"
+              payment_method_token:
+                type: "string"
+  schemas:  
+    # Miscellaneous
+    Price:
+      type: "object"
+      required:
+        - "amount"
+        - "currency"
+      properties:
+        amount:  
+          type: "number"
+          format: "float"
+        compare_at_amount:
+          type: "number"
+          format: "float"
+        currency:
+          type: "string"
+        unit:
+          type: "string"
+        unit_measure:
+          type: "string"
+        amount_per_unit:
+          type: "number"
+          format: "float"
+    # Product Management 
+    CatalogList: 
+      type: "object"
+      properties:
+        catalog_id: 
+          type: "string"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        image:
+          $ref: "#/components/schemas/Image"
+        product_count:
+          type: "integer"
+          format: "int32"
+    Catalog: 
+      type: "object"
+      required:
+        - "id"
+        - "name"
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        image:
+          $ref: "#/components/schemas/Image"
+        product_count:
+          type: "integer"
+          format: "int32"
+        products:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Product"
+    Product:
+      type: "object"
+      required:
+        - "id"
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        short_description:
+          type: "string"
+        featured_image:
+          $ref: "#/components/schemas/Image"
+        images:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Image"
+        price_range: 
+          type: "object"
+          required:
+            - "min"
+          properties:
+            min:
+              $ref: "#/components/schemas/Price"
+            max:
+              $ref: "#/components/schemas/Price"
+        stock_level:
+          type: "integer"
+          format: "int32"
+        variants:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Variant"
+        attributes:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Attribute"
+    Variant: 
+      type: "object"
+      required:
+        - "id"
+        - "sku"
+      properties:
+        id:
+          type: "string"
+        sku:
+          type: "string"
+        image:
+          $ref: "#/components/schemas/Image"
+        price:
+          $ref: "#/components/schemas/Price"
+        stock_level:
+          type: "integer"
+          format: "int32"
+        attribute_values:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/AttributeValue"
+    AttributeValue:
+      type: "object"
+      required:
+        - "key"
+        - "value"
+      properties:
+        key:  
+          type: "string"
+        value:
+          type: "string"
+    Attribute: 
+      type: "object"
+      required:
+        - "id"
+        - "name"
+        - "input_type"
+        - "values"
+      properties:
+        id:
+          type: "string"
+        name:
+          type: "string"
+        input_type:
+          type: "string"
+          enum:
+            - "DROPDOWN"
+            - "RADIO"
+            - "IMAGE_SWATCH"
+            - "COLOR_SWATCH"
+          default: "DROPDOWN"
+        values:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Value"
+    Value:
+      type: "object"
+      required:
+        - "name"
+        - "value"
+      properties:
+        name:  
+          type: "string"
+        value:
+          type: "string"
+        description:
+          type: "string"
+        image_swatch:
+          $ref: "#/components/schemas/Image"
+    Image:
+      type: "object"
+      required:
+        - "url"
+      properties:
+        url:  
+          type: "string"
+          format: "uri"
+        alt:
+          type: "string"
+    # Basket Management
+    Item:
+      type: "object"
+      required: 
+        - "id"
+        - "quantity"
+      properties: 
+        id:
+          type: "string"
+        sku:
+          type: "string"
+        quantity:
+          type: "integer"
+          format: "int32"
+        price:
+          $ref: "#/components/schemas/Price"
+        discounted_price:
+          $ref: "#/components/schemas/Price"
+    Basket:
+      type: "object"
+      required: 
+        - "id"
+      properties: 
+        id: 
+          type: "string"
+        cart_url: 
+          type: "string"
+        customer: 
+            $ref: "#/components/schemas/Customer"
+        items: 
+          type: "array"
+          items:
+            $ref: "#/components/schemas/Item"
+        shipping_address: 
+          $ref: "#/components/schemas/Address"
+        billing_address: 
+          $ref: "#/components/schemas/Address"
+        gift_cards:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/GiftCard"
+        discounts: 
+          type: "array"
+          items: 
+            $ref: "#/components/schemas/Discount"
+        taxation: 
+          type: "string"
+          enum:
+            - "NET"
+            - "GROSS"
+          default: "NET"
+        sub_total: 
+          type: "number"
+          format: "float"
+        gift_cards_total:
+          type: "number"
+          format: "float"
+        discounts_total:
+          type: "number"
+          format: "float"
+        shipping_total:
+          type: "number"
+          format: "float"
+        taxes_total:
+          type: "number"
+          format: "float"
+        total: 
+          type: "number"
+          format: "float"
+    Customer: 
+      type: "object"
+      required: 
+        - "email"
+      properties:
+        id:
+          type: "string"
+        email:
+          type: "string"
+        first_name:
+          type: "string"
+        last_name:
+          type: "string"
+        addresses: 
+          type: "array"
+          items: 
+            $ref: "#/components/schemas/Address"
+    Address: 
+      type: "object"
+      required: 
+        - "first_name"
+        - "last_name"
+        - "address1"
+        - "city"
+        - "country"
+        - "zip"
+      properties:
+        first_name:
+          type: "string"
+        last_name:
+          type: "string"
+        address1:
+          type: "string"
+        address2: 
+          type: "string"
+        city: 
+          type: "string"
+        province: 
+          type: "string"
+        country: 
+          type: "string"
+        country_code_alpha_2: 
+          type: "string"
+        country_code_alpha_3: 
+          type: "string"
+        province_code:
+          type: "string"
+        zip: 
+          type: "string"
+        phone: 
+          type: "string"
+    Discount:
+      type: "object"
+      properties: 
+        name:
+          type: "string"
+        code:
+          type: "string"
+        applied_on:
+          type: "string"
+        value_type:
+          type: "string"
+          enum:
+            - "AMOUNT"
+            - "PERCENTAGE"
+            - "FREE"
+        value: 
+          type: "number"
+          format: 'float'
+        discount_amount:
+          type: "number"
+          format: 'float' 
+        discount_currency:
+          type: "string" 
+    ShippingMethod: 
+      type: "object"
+      properties: 
+        id:
+          type: "string"
+        name:
+          type: "string"
+        description:
+          type: "string"
+        carrier:
+          type: "string"
+        price: 
+          $ref: "#/components/schemas/Price"
+    PaymentMethod: 
+      type: "object"
+      properties: 
+        id:
+          type: "string"
+        name:
+          type: "string"
+    GiftCard: 
+      type: "object"
+      properties: 
+        id:
+          type: "string"
+        amount_used: 
+          $ref: "#/components/schemas/Price"
+        balance:
+          $ref: "#/components/schemas/Price"
+        last_characters:
+          type: "string"
+    # Order Management
+    Order:
+      type: "object"
+      required: 
+        - "id"
+        - "status"
+        - "payment_status"
+        - "total_invoiced"
+        - "total_paid"
+      properties: 
+        id:
+          type: "string"
+        status:
+          type: "string"
+        payment_status:
+          type: "string"
+        total_invoiced:
+          type: "number"
+          format: "float"
+        total_paid:
+          type: "number"
+          format: "float"
