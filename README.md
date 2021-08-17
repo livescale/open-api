@@ -15,9 +15,9 @@
 <!-- ABOUT THE PROJECT -->
 ## About The Project
 
-Livescale is a platform that enable Liveshopping for Merchants by connecting their e-commerce to our Liveshopping solution. This project is for Merchants that operates on e-commerce platform that we do not support yet or for the ones that have very custom needs.
+Livescale is a platform that enables Live shopping for Merchants by connecting their e-commerce to our Live shopping solution. This project is for Merchants that operate on an e-commerce platform that we do not support yet or for the ones that have very custom needs.
 
-This API specification allow you to create a server that will be able to interact with Livescale's Liveshopping App.
+This API specification allows you to create a server that will be able to interact with Livescale's Live shopping App.
 
 <!-- GETTING STARTED -->
 ## Getting Started
@@ -77,7 +77,7 @@ server.post('/baskets/:basket_id/items',
 );
 ```
 
-As we can see in the example above, there is three major step in every endpoint of this API. 
+As we can see in the example above, there is three major steps in every endpoint of this API. 
 
 1. Converting Livescale input into your e-commerce input format
 2. Passing the converted input into your e-commerce
