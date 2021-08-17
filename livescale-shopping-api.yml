@@ -20,12 +20,12 @@ tags:
 - name: "Order Management"
 paths:
   # Authorization
-  /authentication:
+  /authorization:
     post:
       tags:
-        - "authorization"
-      description: "authorization of customer"
-      operationId: "postauthentication"
+        - "Authorization"
+      description: "This endpoint is used to get the e-commerce authorization for subsequent calls"
+      operationId: "postAuthorization"
       responses:
         "200":
           description: "The returned Authorization header will be add on every other call header Authorization"
