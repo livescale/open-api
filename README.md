@@ -1,32 +1,24 @@
 <!-- PROJECT LOGO -->
 <br />
-<p align="center">
+<p align="left">
   <img src="https://www.livescale.tv/wp-content/uploads/2020/11/Livescale-Horizontal-Logo-1.png" alt="Livescale Logo">
-
-  <h3 align="center">Livescale Shopping API</h3>
-
-  <p align="center">
-    <a href="https://github.com/livescale/open-api/issues">Report Bug</a>
-    ·
-    <a href="https://github.com/livescale/open-api/issues">Request Feature</a>
-  </p>
 </p>
-
-<!-- ABOUT THE PROJECT -->
-## About The Project
-
-Livescale is a platform that enables Live shopping for Merchants by connecting their e-commerce to our Live shopping solution. This project is for Merchants that operate on an e-commerce platform that we do not support yet or for the ones that have very custom needs.
-
-This API specification allows you to create a server that will be able to interact with Livescale's Live shopping App.
 
 <!-- GETTING STARTED -->
 ## Getting Started
+This repository holds the official Livescale Shopping OpenAPI specification.
 
-This section will guide you into the server generation and explain the scope of work for the endpoints
+Livescale is a platform that enables Live shopping for Merchants by connecting their e-commerce to our live shopping solution. This project is for Merchants that operate on an e-commerce platform that we do not support yet or for the ones that have custom needs.
 
-### Server generation
+This OpenAPI specification allows you to create a server that will be able to interact with Livescale's live shopping App.
 
-To generate easily a server from this project YAML file you can paste it in the [Swagger Editor](https://editor.swagger.io/) and then select the desired server type. 
+OpenAPI spec 3.0 In Release
+
+* [Shopping API](https://github.com/livescale/open-api/blob/main/livescale-shopping-api.yml)
+
+## Code Generators
+
+You can use this [OpenAPI generator](https://editor.swagger.io/) along with this OAS yaml file to generate a server. 
 
 <!-- USAGE EXAMPLES -->
 ## Usage
