@@ -167,8 +167,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/Basket"
   # Customer Management
-  /baskets/{basket_id}/customers:
-    post:
+  /baskets/{basket_id}/customer:
+    put:
       tags:
         - "Customer Management"
       description: "Update customer to an existing basket"
@@ -190,28 +190,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Basket"
   # Shipping
-  /baskets/{basket_id}/shipping_addresses:
-    post:
-      tags:
-        - "Shipping"
-      description: "Update basket's shipping address"
-      operationId: "postBasketShippingAddress"
-      parameters:
-        - name: "basket_id"
-          in: "path"
-          description: "ID of the basket that needs to be modified"
-          required: true
-          schema: 
-            type: "string"
-      requestBody:
-        $ref: '#/components/requestBodies/AddressBody'
-      responses:
-        "200":
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                $ref: "#/components/schemas/Basket"
   /baskets/{basket_id}/shipping_methods:
     get:
       tags:
@@ -234,7 +212,30 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/ShippingMethod"
-    post:
+  /baskets/{basket_id}/shipping_address:
+    put:
+      tags:
+        - "Shipping"
+      description: "Update basket's shipping address"
+      operationId: "postBasketShippingAddress"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+      requestBody:
+        $ref: '#/components/requestBodies/AddressBody'
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
+  /baskets/{basket_id}/shipping_method:    
+    put:
       tags:
         - "Shipping"
       description: "Add shipping method to the basket"
@@ -256,8 +257,8 @@ paths:
               schema:
                 $ref: "#/components/schemas/Basket"
   # Promotion
-  /baskets/{basket_id}/promotions:
-    post:
+  /baskets/{basket_id}/promotion:
+    put:
       tags:
         - "Promotion"
       description: "Add promotion to the basket"
@@ -278,9 +279,35 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Basket"
+  /baskets/{basket_id}/promotion/{promotion_id}:
+    delete:
+      tags:
+        - "Promotion"
+      description: "Delete specific promotion to an existing basket"
+      operationId: "deleteBasketPromotion"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket that needs to be modified"
+          required: true
+          schema: 
+            type: "string"
+        - name: "promotion_id"
+          in: "path"
+          description: "ID of the promotion that needs to be deleted"
+          required: true
+          schema: 
+            type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Basket"
   # Payment Information
-  /baskets/{basket_id}/billing_addresses:
-    post:
+  /baskets/{basket_id}/billing_address:
+    put:
       tags:
         - "Payment Information"
       description: "Update basket's billing address"
@@ -323,7 +350,8 @@ paths:
                 type: "array"
                 items:
                   $ref: "#/components/schemas/PaymentMethod"
-    post:
+  /baskets/{basket_id}/payment_method:  
+    put:
       tags:
         - "Payment Information"
       description: "Add payment method to the basket"
@@ -360,7 +388,36 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Order"
+  /orders/{order_id}/payment_status:
+    put:
+      tags:
+        - "Order Management"
+      description: "Send the payment status of the Order"
+      operationId: "postOrderPaymentStatus"
+      parameters:
+        - name: "order_id"
+          in: "path"
+          description: "ID of the order"
+          required: true
+          schema: 
+            type: "string"
+      requestBody:
+        $ref: "#/components/requestBodies/OrderPaymentStatusBody"
+      responses:
+        "201":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Order"
+security:
+  - ApiKeyAuth: []  
 components:
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      in: header
+      name: X-LIVESCALE-API-KEY
   requestBodies:
     ItemBody:
       description: Item ID and quantity
@@ -456,7 +513,7 @@ components:
               coupon: 
                 type: "string"
     OrderBody: 
-      description: ID of the basket to convert to Order. Gateway Token and Payment Method Token needed to place and Authorization and Capture.
+      description: ID of the basket to convert to Order.
       required: true
       content:
         application/json:
@@ -465,9 +522,22 @@ components:
             properties: 
               basket_id: 
                 type: "string"
-              gateway_token:
+              transaction_id:
                 type: "string"
-              payment_method_token:
+    OrderPaymentStatusBody: 
+      description: Status of the Order's payment.
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties: 
+              status: 
+                type: "string"
+                enum:
+                  - "PAID"
+                  - "FAILED"
+              reason:
                 type: "string"
   schemas:  
     # Miscellaneous
