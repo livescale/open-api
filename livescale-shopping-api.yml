@@ -190,28 +190,6 @@ paths:
               schema:
                 $ref: "#/components/schemas/Basket"
   # Shipping
-  /baskets/{basket_id}/shipping_methods:
-    get:
-      tags:
-        - "Shipping"
-      description: "Get shipping methods available for the basket"
-      operationId: "getBasketShippingMethods"
-      parameters:
-        - name: "basket_id"
-          in: "path"
-          description: "ID of the basket"
-          required: true
-          schema: 
-            type: "string"
-      responses:
-        "200":
-          description: "successful operation"
-          content:
-            application/json:
-              schema:
-                type: "array"
-                items:
-                  $ref: "#/components/schemas/ShippingMethod"
   /baskets/{basket_id}/shipping_address:
     put:
       tags:
@@ -234,6 +212,28 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Basket"
+  /baskets/{basket_id}/shipping_methods:
+    get:
+      tags:
+        - "Shipping"
+      description: "Get shipping methods available for the basket"
+      operationId: "getBasketShippingMethods"
+      parameters:
+        - name: "basket_id"
+          in: "path"
+          description: "ID of the basket"
+          required: true
+          schema: 
+            type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/ShippingMethod"
   /baskets/{basket_id}/shipping_method:    
     put:
       tags:
