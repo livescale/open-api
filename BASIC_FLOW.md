@@ -1,9 +1,16 @@
-This document is ment to help you understand the basical flow of a customer journey. The flow below represent the call made by Livescale to the server implementation during a Live Event. More detail can be found below the flow. 
+# Livescale Shopping API Basic Flow
 
-![Livescale Shopping API Basic Flow](images/Livescale_Shopping_API_Basic_Flow.jpg)
+This document is ment to help you understand the basical flow of a customer journey. The flow below represent the call made by Livescale to the server implementation during a Live Event. More details can be found below the flow. 
+
+## Flow
+<p align="left">
+ <img src="images/Livescale_Shopping_API_Basic_Flow.jpg" width="500" >
+</p>
+
+
 
 1. When a person join the live event, the endpoint **/oauth2/token** is called with the *client_id* and *client_secret* provided in the Livescale Dashboard. The grant_type parameter will be, **"client_credentials"** to get the *access_token*, and **"refresh_token"** after receiving a token expired error. We expect to receive back an *access_token* and a *refresh_token*. This *access_token* will be used in every subsequent calls. The *refresh_token* will be pass in the endpoint **/oauth2/token** refresh_token parameters when the parameter grant_type will be **"refresh_token"**. The audience field will always be **"livescale"**. The Authorization section of this API specification is conform to the [RFC 6749](https://tools.ietf.org/html/rfc6749)
-2. When a customer start a checkout interaction, a Post /customers/login a call with type **"guest"** will be sent. Some e-commerce requires a specific *customer_token*. In that case the server will be responsable to link the *customer_token* and the *access_token* together to keep track of this customer.
+2. When a customer start a checkout interaction, the endpoint **/customers/login** is called with type **"guest"**. Some e-commerce requires a specific *customer_token*. In that case the server will be responsable to link the *customer_token* and the *access_token* together to keep track of this customer.
 3. The only type of basket supported at the moment is **"guest"**. The endpoint **/baskets/{basket_id}/customer** is typically used to set the email address on the basket.
 4. After setting the billing address on the basket, a get **/baskets/{basket_id}/payment_methods** is asked. Only a **"LIVESCALE"** payment method is currently supported and this payment method must be returned by this endpoint.
 5. At the moment only the payment method id **"LIVESCALE"** is going to be sent in this endpoint payload.
