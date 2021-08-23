@@ -23,6 +23,8 @@ You can use this [OpenAPI generator](https://editor.swagger.io/) along with this
 <!-- USAGE EXAMPLES -->
 ## Usage
 
+A Basic Customer Flow can be found in the [Basic Flow Document](BASIC_FLOW.md).
+
 This is an example of the **POST /baskets/:basket_id/items** endpoint that use the SFCC© Commerce SDK.
 
 ```javascript
@@ -69,7 +71,7 @@ server.post('/baskets/:basket_id/items',
 );
 ```
 
-As we can see in the example above, there is three major steps in every endpoint of this API. 
+The example above show that there is three major steps in every endpoint of this API. 
 
 1. Converting Livescale input into your e-commerce input format
 2. Passing the converted input into your e-commerce
@@ -80,5 +82,5 @@ As we can see in the example above, there is three major steps in every endpoint
 <!-- LICENSE -->
 ## License
 
-Distributed under the Creative Commons Zero v1.0 Universal License. See `LICENSE` for more information.
+Distributed under the Creative Commons Zero v1.0 Universal License. See [License](LICENSE) for more information.
 
