@@ -1,6 +1,6 @@
-# Livescale Shopping API Basic Flow
+# Livescale Shopping API Standard Flow
 
-This document is ment to help you understand the basical flow of a customer journey. The flow below represent the call made by Livescale to the server implementation during a Live Event. More details can be found below the flow. 
+This document is ment to help you understand the standard flow of a customer journey. The flow below represent the call made by Livescale to the server implementation during a Live Event. More details can be found below the flow. 
 
 ## Flow
 <p align="left">
