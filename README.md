@@ -8,6 +8,8 @@
 ## Getting Started
 This repository holds the official Livescale Shopping OpenAPI specification.
 
+Before you start, please consult the [Standard Flow](BASIC_FLOW.md) description.
+
 Livescale is a platform that enables Live shopping for Merchants by connecting their e-commerce to our live shopping solution. This project is for Merchants that operate on an e-commerce platform that we do not support yet or for the ones that have custom needs.
 
 This OpenAPI specification allows you to create a server that will be able to interact with Livescale's live shopping App.
@@ -22,8 +24,6 @@ You can use this [OpenAPI generator](https://editor.swagger.io/) along with this
 
 <!-- USAGE EXAMPLES -->
 ## Usage
-
-A Basic Customer Flow can be found in the [Basic Flow Document](BASIC_FLOW.md).
 
 This is an example of the **POST /baskets/:basket_id/items** endpoint that use the SFCC© Commerce SDK.
 
