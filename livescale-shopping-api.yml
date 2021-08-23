@@ -11,6 +11,7 @@ info:
     url: "http://www.apache.org/licenses/LICENSE-2.0.html"
 tags:
 - name: "Authorization"
+- name: "Customer"
 - name: "Product Management"
 - name: "Basket Management"
 - name: "Customer Management"
@@ -20,19 +21,33 @@ tags:
 - name: "Order Management"
 paths:
   # Authorization
-  /authorization:
+  /oauth2/token:
     post:
       tags:
         - "Authorization"
-      description: "This endpoint is used to get the e-commerce authorization for subsequent calls"
-      operationId: "postAuthorization"
+      description: The grant_type parameter will be **"client_credentials"** to get the access_token and **"refresh_token"** after receiving a token expired error. We expect to receive back an access_token and a refresh_token. This access_token will be used in every subsequent calls. The refresh_token will be pass in the Post /oauth2/token parameters when the parameter grant_type will be "refresh_token". The audience field will always be **"livescale"**. The Authorization section of this API specification is conform to the [RFC 6749](https://tools.ietf.org/html/rfc6749)
+      operationId: "postToken"
+      requestBody:
+        $ref: '#/components/requestBodies/oAuth2TokenBody'
       responses:
         "200":
-          description: "The returned Authorization header will be add on every other call header Authorization"
-          headers:
-            Authorization:
+          description: "The returned Access Token will be add on every subsequent call header Authorization"
+          content:
+            application/json:
               schema:
-                type: "string"
+                $ref: "#/components/schemas/AccessToken"
+  # Customer
+  /customers/login:
+    post:
+      tags:
+        - "Customer"
+      description: "This endpoint is used the start a customer session"
+      operationId: "postCustomerLogin"
+      requestBody:
+        $ref: '#/components/requestBodies/CustomerLoginBody'
+      responses:
+        "200":
+          description: ""
   # Product Management 
   /catalogs:
       get:
@@ -411,14 +426,53 @@ paths:
               schema:
                 $ref: "#/components/schemas/Order"
 security:
-  - ApiKeyAuth: []  
+  - oAuth2: []
 components:
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      in: header
-      name: X-LIVESCALE-API-KEY
+    oAuth2:
+      type: oauth2
+      description: The client id and client password to authorize the client on the server is provided in Livescale's Dashboard
+      flows:
+        clientCredentials:   
+          tokenUrl: /oauth2/token
+          refreshUrl: /oauth2/token
+          scopes: {}
   requestBodies:
+    oAuth2TokenBody: 
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties: 
+              grant_type: 
+                type: "string"
+              client_id: 
+                type: "string"
+              client_secret: 
+                type: "string"
+              refresh_token: 
+                type: "string"
+              audience:
+                type: "string"
+              scope:
+                type: "string"
+            required:
+                - grant_type
+                - client_id
+    CustomerLoginBody: 
+      description: Customer login information
+      required: true
+      content:
+        application/json:
+          schema:
+            type: "object"
+            properties: 
+              type: 
+                type: "string"
+                enum:
+                  - "guest"
+                default: "guest"
     ItemBody:
       description: Item ID and quantity
       required: true
@@ -541,6 +595,21 @@ components:
                 type: "string"
   schemas:  
     # Miscellaneous
+    AccessToken:
+      type: "object"
+      properties:
+        access_token: 
+          type: "string"
+        refresh_token: 
+          type: "string"
+        token_type: 
+          type: "string"
+        expires_in:           
+          type: "integer"
+          format: "int32"
+      required:
+        - access_token
+        - token_type
     Price:
       type: "object"
       required:
