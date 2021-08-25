@@ -10,7 +10,9 @@ This repository holds the official Livescale Shopping OpenAPI specification.
 
 Before you start, please consult the [Standard Flow](BASIC_FLOW.md) description.
 
-Livescale is a platform that enables Live shopping for Merchants by connecting their e-commerce to our live shopping solution. This project is for Merchants that operate on an e-commerce platform that we do not support yet or for the ones that have custom needs.
+Livescale is a platform that enables Live shopping for Merchants by connecting their e-commerce to our live shopping solution. This repository is for Merchants that operate on an e-commerce platform that have custom needs.
+
+With this OpenAPI, the Merchant can choose to integrate fully with our seamless integrated checkout (i.e. viewer doesn't leave the live shopping experience) or can choose for the viewer to checkout on the Merchant or Retailer's website.
 
 This OpenAPI specification allows you to create a server that will be able to interact with Livescale's live shopping App.
 
