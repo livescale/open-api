@@ -4,7 +4,7 @@ This document is ment to help you understand the standard flow of a customer jou
 
 ## Flow
 <p align="left">
- <img src="images/Livescale_Shopping_API_Basic_Flow.jpg" width="500" >
+ <img src="images/Livescale-Shopping-API-Standard-Flow.jpg" width="500" >
 </p>
 
 

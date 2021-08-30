@@ -8,7 +8,7 @@
 ## Getting Started
 This repository holds the official Livescale Shopping OpenAPI specification.
 
-Before you start, please consult the [Standard Flow](BASIC_FLOW.md) description.
+Before you start, please consult the [Standard Flow](STANDARD-FLOW.md) description.
 
 Livescale is a platform that enables Live shopping for Merchants by connecting their e-commerce to our live shopping solution. This repository is for Merchants that operate on an e-commerce platform that have custom needs.
 
