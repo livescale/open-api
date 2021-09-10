@@ -73,7 +73,7 @@ server.post('/baskets/:basket_id/items',
 );
 ```
 
-The example above show that there is three major steps in every endpoint of this API. 
+The example above show that there are three major steps in every endpoint of this API. 
 
 1. Converting Livescale input into your e-commerce input format
 2. Passing the converted input into your e-commerce

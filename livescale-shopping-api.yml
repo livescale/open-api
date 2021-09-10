@@ -21,14 +21,14 @@ tags:
 - name: "Order Management"
 paths:
   # Authorization
-  /oauth2/token:
+  /oauth/token:
     post:
       tags:
         - "Authorization"
-      description: The grant_type parameter will be **"client_credentials"** to get the access_token and **"refresh_token"** after receiving a token expired error. We expect to receive back an access_token and a refresh_token. This access_token will be used in every subsequent calls. The refresh_token will be pass in the Post /oauth2/token parameters when the parameter grant_type will be "refresh_token". The audience field will always be **"livescale"**. The Authorization section of this API specification is conform to the [RFC 6749](https://tools.ietf.org/html/rfc6749)
+      description: The grant_type parameter will be **"client_credentials"**. We expect to receive back an **"access_token"**. This **"access_token"** will be used in every subsequent calls. If the request failed client authentication or is invalid, the authorization server returns an error response. Upon reception of the error response, a */oauth/token* call will be placed to get a new **"access_token"**. The audience field will always be **"livescale"**. The Authorization section of this API specification is conform to the [RFC 6749](https://tools.ietf.org/html/rfc6749)
       operationId: "postToken"
       requestBody:
-        $ref: '#/components/requestBodies/oAuth2TokenBody'
+        $ref: '#/components/requestBodies/oAuthTokenBody'
       responses:
         "200":
           description: "The returned Access Token will be add on every subsequent call header Authorization"
@@ -47,7 +47,7 @@ paths:
         $ref: '#/components/requestBodies/CustomerLoginBody'
       responses:
         "200":
-          description: ""
+          description: "Customer login"
   # Product Management 
   /catalogs:
       get:
@@ -61,17 +61,22 @@ paths:
             content:
               application/json:
                 schema:
-                  type: "array"
-                  items:
-                    $ref: "#/components/schemas/CatalogList"
+                  type: "object"
+                  properties:
+                    supported: 
+                      type: "boolean"
+                    catalogs:
+                      type: "array"
+                      items:
+                        $ref: "#/components/schemas/CatalogList"
           "404":
             description: "No catalog found"
-  /catalogs/{catalog_id}/products:
+  /catalogs/{catalog_id}/categories:
     get:
       tags:
         - "Product Management"
-      description: "Get all products from a catalog"
-      operationId: "getCatalogProducts"
+      description: "Get all categories from a catalog"
+      operationId: "getCatalogCategories"
       parameters:
       - name: "catalog_id"
         in: "path"
@@ -85,11 +90,54 @@ paths:
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Catalog"
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/CategoryList"
         "400":
           description: "Invalid Catalog ID supplied"
         "404":
           description: "Catalog not found"
+  /categories:
+      get:
+        tags:
+        - "Product Management"
+        description: "Get all categories available"
+        operationId: "getCategories"
+        responses:
+          "200":
+            description: "successful operation"
+            content:
+              application/json:
+                schema:
+                  type: "array"
+                  items:
+                    $ref: "#/components/schemas/CategoryList"
+          "404":
+            description: "No Category found"
+  /categories/{category_id}/products:
+    get:
+      tags:
+        - "Product Management"
+      description: "Get all products from a category"
+      operationId: "getCategoryProducts"
+      parameters:
+      - name: "category_id"
+        in: "path"
+        description: "ID of the category that needs to be fetched"
+        required: true
+        schema: 
+          type: "string"
+      responses:
+        "200":
+          description: "successful operation"
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Category"
+        "400":
+          description: "Invalid Category ID supplied"
+        "404":
+          description: "Category not found"
   # Basket Management
   /baskets:
     post:
@@ -403,12 +451,12 @@ paths:
             application/json:
               schema:
                 $ref: "#/components/schemas/Order"
-  /orders/{order_id}/payment_status:
+  /orders/{order_id}:
     put:
       tags:
         - "Order Management"
-      description: "Send the payment status of the Order"
-      operationId: "postOrderPaymentStatus"
+      description: "Send the statuses of the Order"
+      operationId: "putOrder"
       parameters:
         - name: "order_id"
           in: "path"
@@ -417,7 +465,7 @@ paths:
           schema: 
             type: "string"
       requestBody:
-        $ref: "#/components/requestBodies/OrderPaymentStatusBody"
+        $ref: "#/components/requestBodies/UpdateOrderBody"
       responses:
         "201":
           description: "successful operation"
@@ -434,24 +482,18 @@ components:
       description: The client id and client password to authorize the client on the server is provided in Livescale's Dashboard
       flows:
         clientCredentials:   
-          tokenUrl: /oauth2/token
-          refreshUrl: /oauth2/token
+          tokenUrl: /oauth/token
+          refreshUrl: /oauth/token
           scopes: {}
   requestBodies:
-    oAuth2TokenBody: 
-      required: true
+    oAuthTokenBody: 
+      required: false
       content:
-        application/json:
+        application/x-www-form-urlencoded:
           schema:
             type: "object"
             properties: 
               grant_type: 
-                type: "string"
-              client_id: 
-                type: "string"
-              client_secret: 
-                type: "string"
-              refresh_token: 
                 type: "string"
               audience:
                 type: "string"
@@ -576,10 +618,8 @@ components:
             properties: 
               basket_id: 
                 type: "string"
-              transaction_id:
-                type: "string"
-    OrderPaymentStatusBody: 
-      description: Status of the Order's payment.
+    UpdateOrderBody: 
+      description: ID of the basket to convert to Order.
       required: true
       content:
         application/json:
@@ -589,8 +629,19 @@ components:
               status: 
                 type: "string"
                 enum:
+                  - "NEW"
+                  - "FAILED"
+              payment_status: 
+                type: "string"
+                enum:
                   - "PAID"
                   - "FAILED"
+              transaction_id: 
+                type: "string"
+              custom_attributes:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/CustomAttributes"
               reason:
                 type: "string"
   schemas:  
@@ -600,8 +651,6 @@ components:
       properties:
         access_token: 
           type: "string"
-        refresh_token: 
-          type: "string"
         token_type: 
           type: "string"
         expires_in:           
@@ -610,6 +659,22 @@ components:
       required:
         - access_token
         - token_type
+    CustomAttributes:
+      type: "object"
+      required:
+        - "key"
+        - "value"
+      properties:
+        key:  
+          type: "string"
+        value:
+          type: "string"
+        level:
+          type: "string"
+          enum:
+            - "ORDER"
+            - "PAYMENT"
+            - "TRANSACTION"
     Price:
       type: "object"
       required:
@@ -641,12 +706,16 @@ components:
           type: "string"
         description:
           type: "string"
-        image:
-          $ref: "#/components/schemas/Image"
-        product_count:
-          type: "integer"
-          format: "int32"
-    Catalog: 
+    CategoryList: 
+      type: "object"
+      properties:
+        category_id: 
+          type: "string"
+        name:
+          type: "string"
+        description:
+          type: "string"
+    Category: 
       type: "object"
       required:
         - "id"
@@ -658,11 +727,6 @@ components:
           type: "string"
         description:
           type: "string"
-        image:
-          $ref: "#/components/schemas/Image"
-        product_count:
-          type: "integer"
-          format: "int32"
         products:
           type: "array"
           items:
