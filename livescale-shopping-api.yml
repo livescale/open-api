@@ -65,7 +65,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/Catalog'
         '400':
-          description: 'Bad Request.'
+          description: 'Bad Request'
         '401':
           description: 'Unauthorized. Your Client ID is invalid, or you are not allowed to access the content provided by the requested URL.'
   /catalogs/{catalog_id}/categories:
@@ -101,9 +101,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Category'
         '400':
-          description: 'Invalid Catalog ID supplied'
+          description: 'Bad Request'
+        '401':
+          description: 'Unauthorized. Your Client ID is invalid, or you are not allowed to access the content provided by the requested URL.'
         '404':
-          description: 'Catalog not found'
+          description: 'Requested resource not found'
   /catalogs/{catalog_id}/categories/{category_id}/products:
     get:
       tags:
@@ -143,9 +145,11 @@ paths:
                 items:
                   $ref: '#/components/schemas/Product'
         '400':
-          description: 'Invalid Category ID supplied'
+          description: 'Bad Request'
+        '401':
+          description: 'Unauthorized. Your Client ID is invalid, or you are not allowed to access the content provided by the requested URL.'
         '404':
-          description: 'Category not found'
+          description: 'Requested resource not found'
   # Basket Management
   /baskets:
     post:
