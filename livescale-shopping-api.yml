@@ -720,6 +720,8 @@ components:
           type: 'string'
         name:
           type: 'string'
+        brand:
+          type: 'string'
         description:
           type: 'string'
         short_description:
