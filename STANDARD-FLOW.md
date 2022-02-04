@@ -18,3 +18,5 @@ This document is ment to help you understand the standard flow of a customer jou
 7. The PSP *transaction_id* is provided in this endpoint's payload. This PSP *transaction_id* should be stored on the Merchant system for post order purposes such as refund.
 8. In the Livescale Admin Dashboard the Merchant is able to decided to Capture of the funds later in their payment process. If Livescale is not doing the Capture the order, the flow will end there.
 9. If Livescale is doing the Capture, the capture will be made against the Merchant PSP and a payment status will be sent. In the case of a failed capture, a reason will be added to the payload.
+
+Note: all the products in the catalog should have at least one variant
